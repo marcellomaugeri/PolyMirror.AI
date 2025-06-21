@@ -120,7 +120,7 @@ if prompt := st.chat_input("What is up?"):
     try:
         # --- 1. Generate Voucher as API Key ---
         # We pre-authorize a max cost. The backend calculates the actual cost.
-        voucher_api_key = get_voucher_api_key("gpt-4o-mini", 1000, 1000)
+        voucher_api_key = get_voucher_api_key("gpt-4o-mini", 30, 50)
 
         # --- 2. Call Backend via OpenAI Library ---
         with st.spinner("Waiting for response..."):
