@@ -1,0 +1,237 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #1a1a1a; /* Dark background */
+  color: #f0f0f0; /* Light text */
+}
+
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #444;
+}
+
+.App-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.wallet-button {
+  background-color: #61dafb;
+  color: #282c34;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.wallet-button:hover {
+  background-color: #52bade;
+}
+
+.wallet-button.connected {
+  background-color: #4caf50;
+  color: white;
+  cursor: default;
+}
+
+.wallet-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.wallet-info span {
+  font-size: 1rem;
+  font-weight: 500;
+  background-color: #333;
+  padding: 8px 15px;
+  border-radius: 8px;
+}
+
+.error-message {
+  color: #ff4d4d;
+  background-color: #402626;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 20px;
+}
+
+.connect-prompt {
+  margin-top: 100px;
+}
+
+.dashboard {
+  padding: 20px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+}
+
+.grid-item {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card {
+  background-color: #2c2c2c;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+
+.card.full-height {
+  height: 500px; /* Or adjust as needed */
+}
+
+.card h2 {
+  margin-top: 0;
+  border-bottom: 1px solid #444;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.top-up-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.top-up-controls input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #555;
+  background-color: #333;
+  color: #f0f0f0;
+  font-size: 1rem;
+}
+
+.top-up-controls button {
+  background-color: #61dafb;
+  color: #282c34;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  white-space: nowrap;
+}
+
+.top-up-controls button:hover {
+  background-color: #52bade;
+}
+
+.transaction-list {
+  max-height: 350px; /* Adjust as needed */
+  overflow-y: auto;
+  padding-right: 10px; /* For scrollbar spacing */
+}
+
+.transaction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 10px;
+  border-bottom: 1px solid #444;
+}
+
+.transaction-item:last-child {
+  border-bottom: none;
+}
+
+.tx-info, .tx-tokens, .tx-cost {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.tx-model {
+  font-weight: bold;
+}
+
+.tx-time {
+  font-size: 0.8rem;
+  color: #aaa;
+}
+
+.tx-cost span {
+  font-weight: bold;
+  color: #ff6b6b;
+}
+
+.custom-tooltip {
+  background-color: rgba(40, 44, 52, 0.9);
+  border: 1px solid #61dafb;
+  padding: 10px;
+  border-radius: 8px;
+  color: #f0f0f0;
+}
+
+.custom-tooltip .label {
+  font-weight: bold;
+}
+
+.custom-tooltip .cost {
+  color: #82ca9d;
+  font-weight: bold;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}

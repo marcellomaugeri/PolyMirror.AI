@@ -1,0 +1,22 @@
+{
+  "name": "polymirror-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "mirror.js",
+  "scripts": {
+    "start": "node mirror.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.17.0",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "ethers": "^6.14.4",
+    "express": "^4.21.2",
+    "node-cron": "^3.0.0",
+    "pg": "^8.7.1",
+    "openai": "^4.52.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.17.0"
+  }
+}
