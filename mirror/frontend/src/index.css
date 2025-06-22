@@ -157,57 +157,73 @@ body {
 
 /* Transaction List */
 .transaction-list {
-  max-height: 300px;
-  overflow-y: auto;
-  padding-right: 10px; /* for scrollbar */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.transaction-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--on-background-color-muted);
 }
 
 .transaction-item {
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 1rem;
-  padding: 0.75rem 0.25rem;
-  border-bottom: 1px solid var(--border-color);
+  grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
+  padding: 0.75rem 1rem;
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius);
+  transition: background-color 0.2s ease;
 }
 
-.transaction-item:last-child {
-  border-bottom: none;
+.transaction-item:hover {
+  background-color: var(--surface-hover-color);
 }
 
-.tx-info .tx-model {
-  font-weight: bold;
-  color: var(--on-surface-color);
+.tx-model {
+  font-weight: 500;
+  margin-bottom: 0.25rem; /* Add space below model */
 }
 
-.tx-info .tx-time {
-  font-size: 0.8rem;
-  opacity: 0.6;
-  display: block;
+.tx-time {
+  font-size: 0.8rem; /* Smaller font for timestamp */
+  opacity: 0.7; /* Make it less prominent */
+  grid-column: 1; /* Ensure it stays in the first column */
 }
 
 .tx-tokens {
-  font-size: 0.9rem;
-  text-align: right;
-  opacity: 0.8;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  justify-content: center;
 }
 
 .tx-cost {
-  font-weight: bold;
-  color: var(--secondary-color);
   text-align: right;
+  font-weight: 500;
+  cursor: help;
 }
 
-/* Chart */
+.tx-cost span {
+    font-family: 'monospace';
+}
+
+/* Chart Tooltip */
 .custom-tooltip {
   background-color: rgba(40, 40, 40, 0.9);
   border: 1px solid var(--border-color);
-  padding: 1rem;
-  border-radius: 8px;
-  color: var(--on-background-color);
+  padding: 0.75rem;
+  border-radius: 6px;
 }
-.custom-tooltip .label { font-weight: bold; margin-bottom: 0.5rem; }
-.custom-tooltip .cost { margin-top: 0.5rem; color: var(--secondary-color); }
+
+.custom-tooltip .label { margin: 0 0 0.5rem 0; font-weight: bold; }
+.custom-tooltip .intro { margin: 0.25rem 0; }
+.custom-tooltip .cost { margin: 0.25rem 0; font-weight: bold; color: var(--secondary-color); }
 
 /* Modals */
 .modal-overlay {
@@ -218,8 +234,8 @@ body {
   bottom: 0;
   background: rgba(0, 0, 0, 0.75);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 1000;
 }
 
@@ -228,7 +244,7 @@ body {
   padding: 2rem;
   border-radius: 8px;
   width: 90%;
-  max-width: 450px;
+  max-width: 500px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   text-align: left;
 }
@@ -239,62 +255,101 @@ body {
 }
 
 .modal-content p {
-  color: var(--on-background-color);
-  opacity: 0.8;
+  margin-bottom: 1.5rem;
   line-height: 1.6;
+  opacity: 0.9;
 }
 
 .modal-actions {
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
 }
 
 .modal-actions button {
-  padding: 0.6rem 1.2rem;
+  padding: 0.75rem 1.5rem;
   border-radius: 6px;
-  border: none;
-  cursor: pointer;
   font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
 }
 
-.modal-input {
-    width: 100%;
-    padding: 0.8rem;
-    margin: 1rem 0;
-    background-color: #333;
-    border: 1px solid #444;
-    border-radius: 6px;
-    color: var(--on-surface-color);
-    font-size: 1.2rem;
+.btn-cancel {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--on-background-color);
 }
+.btn-cancel:hover { background-color: var(--border-color); }
 
 .btn-confirm {
   background-color: var(--primary-color);
   color: #000;
 }
-
-.btn-cancel {
-  background-color: #444;
-  color: #fff;
-}
+.btn-confirm:hover { background-color: #a063f0; }
 
 .btn-danger {
-    background-color: var(--error-color);
-    color: #fff;
+  background-color: var(--error-color);
+  color: #fff;
+}
+.btn-danger:hover { background-color: #b74e5e; }
+
+/* Pricing Table */
+.pricing-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
 }
 
-/* General */
+.pricing-header, .pricing-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    padding: 0.75rem 1rem;
+    align-items: center;
+    text-align: left;
+}
+
+.pricing-header {
+    font-weight: bold;
+    color: var(--on-background-color-muted);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.pricing-row {
+    background-color: var(--surface-color);
+    border-radius: 4px;
+}
+
+.pricing-model {
+    font-weight: 500;
+}
+
+.pricing-cost {
+    text-align: right;
+    font-family: 'monospace';
+    cursor: help;
+}
+
+.pricing-rate-info {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+/* Connect Prompt */
+.connect-prompt {
+    padding: 3rem;
+    text-align: center;
+}
+
+/* Error Message */
 .error-message {
   color: var(--error-color);
   padding: 1rem;
   background-color: rgba(207, 102, 121, 0.1);
   border: 1px solid var(--error-color);
-  border-radius: 8px;
+  border-radius: 6px;
   margin: 1rem 2rem;
-}
-
-.connect-prompt {
-    padding: 4rem;
 }

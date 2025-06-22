@@ -1,0 +1,20 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model UsageRecord {
+  id        String   @id @default(cuid())
+  channelId String
+  timestamp DateTime @default(now())
+  model     String
+  input     Int
+  output    Int
+  cost      String // Storing cost as a string (BigInt) to avoid precision issues
+
+  @@index([channelId])
+}

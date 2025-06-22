@@ -15,6 +15,9 @@ const __dirname = path.dirname(__filename);
 // Load environment variables from the root .env file
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
+// --- DATABASE & PRISMA ---
+const prisma = new PrismaClient();
+
 // --- DEBUGGING ---
 console.log("--- Loaded Environment Variables ---");
 console.log("PROVIDER_URL:", process.env.AMOY_RPC_URL);
@@ -35,7 +38,7 @@ const contractAddress = process.env.CONTRACT_ADDRESS;
 const USD_CENTS_PER_POL = 19;
 
 // Original prices are in USD per 1,000,000 tokens.
-// We convert them to USD Cents * 100 per 1,000,000 tokens to work with integers.
+// We convert them to USD Cents per 1,000,000 tokens to work with integers.
 // E.g., $0.15 becomes 15.
 const openAiPricingScaled = {
     "gpt-4.1": { input: 200, output: 800 },
@@ -74,42 +77,52 @@ console.log(`[DEBUG] Backend wallet configured as owner: ${ownerWallet.address}`
 app.use(cors());
 app.use(express.json());
 
-// --- MOCK DATABASE ---
-const usageData = {};
-
 // --- ROUTES ---
 
-// Endpoint to get token usage data
-app.get("/api/usage/:channelId", (req, res) => {
+// Endpoint to get token usage data from the database
+app.get("/api/usage/:channelId", async (req, res) => {
   const { channelId } = req.params;
-  const data = usageData[channelId] || [];
-  res.json(data);
+  try {
+    const records = await prisma.usageRecord.findMany({
+      where: { channelId },
+      orderBy: { timestamp: 'desc' },
+    });
+    // Map the database records to the format expected by the frontend
+    const formattedRecords = records.map(record => ({
+        id: record.id,
+        timestamp: record.timestamp.toISOString(),
+        name: record.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        input: record.input,
+        output: record.output,
+        model: record.model,
+        cost: record.cost,
+    }));
+    res.json(formattedRecords);
+  } catch (error) {
+    console.error(`[ERROR] Failed to fetch usage data for channel ${channelId}:`, error);
+    res.status(500).json({ error: "Failed to retrieve usage data." });
+  }
 });
 
 // Endpoint to provide pricing data to the frontend
 app.get("/api/pricing", (req, res) => {
+  const models = {};
+  const polPerUsd = 100 / USD_CENTS_PER_POL;
+
+  for (const [model, prices] of Object.entries(openAiPricingScaled)) {
+    const inputUsd = prices.input / 100;
+    const outputUsd = prices.output / 100;
+    models[model] = {
+      inputUsd,
+      outputUsd,
+      inputPol: (inputUsd * polPerUsd).toFixed(4),
+      outputPol: (outputUsd * polPerUsd).toFixed(4),
+    };
+  }
+
   res.json({
-    // Send the original dollar values to the frontend for display
-    models: {
-        "gpt-4.1": { input: 2.00, output: 8.00 },
-        "gpt-4.1-mini": { input: 0.40, output: 1.60 },
-        "gpt-4.1-nano": { input: 0.10, output: 0.40 },
-        "gpt-4.5-preview": { input: 75.00, output: 150.00 },
-        "gpt-4o": { input: 2.50, output: 10.00 },
-        "gpt-4o-audio-preview": { input: 2.50, output: 10.00 },
-        "gpt-4o-realtime-preview": { input: 5.00, output: 20.00 },
-        "gpt-4o-mini": { input: 0.15, output: 0.60 },
-        "gpt-4o-mini-audio-preview": { input: 0.15, output: 0.60 },
-        "gpt-4o-mini-realtime-preview": { input: 0.60, output: 2.40 },
-        "o1": { input: 15.00, output: 60.00 },
-        "o1-pro": { input: 150.00, output: 600.00 },
-        "o3-pro": { input: 20.00, output: 80.00 },
-        "o3": { input: 2.00, output: 8.00 },
-        "o4-mini": { input: 1.10, output: 4.40 },
-        "o3-mini": { input: 1.10, output: 4.40 },
-        "o1-mini": { input: 1.10, output: 4.40 },
-    },
-    pol_to_usd_rate: 1 / USD_CENTS_PER_POL, // Keep original rate for display
+    polRate: polPerUsd,
+    models,
   });
 });
 
@@ -175,7 +188,7 @@ app.post("/v1/chat/completions", async (req, res) => {
     // To maintain precision with BigInt, we do all multiplications first, then division.
     // Formula: (totalScaledCost * WEI_PER_POL) / (TOKENS_PER_UNIT * USD_CENTS_PER_POL * 100)
     const costInWeiNumerator = totalScaledCost * BigInt(10**18); // Cost * 10^18 to get to wei
-    const costInWeiDenominator = BigInt(1_000_000) * BigInt(USD_CENTS_PER_POL) * BigInt(100);
+    const costInWeiDenominator = BigInt(1_000_000) * BigInt(USD_CENTS_PER_POL);
     const amountInWei = costInWeiNumerator / costInWeiDenominator;
 
     // For logging and storage, convert wei back to a readable POL string
@@ -199,18 +212,24 @@ app.post("/v1/chat/completions", async (req, res) => {
     const receipt = await redeemTx.wait();
     console.log("Voucher redeemed successfully! Tx hash:", receipt.hash);
 
-    // 5. Store usage data
-    if (!usageData[voucher.channel]) {
-      usageData[voucher.channel] = [];
+    // 5. Store usage data in the database
+    try {
+      const now = new Date();
+      await prisma.usageRecord.create({
+        data: {
+          channelId: voucher.channel,
+          timestamp: now,
+          model: completion.model,
+          input: inputTokens,
+          output: outputTokens,
+          cost: amountInWei.toString(),
+        },
+      });
+      console.log(`[INFO] Usage record saved to database for channel ${voucher.channel}`);
+    } catch (dbError) {
+        console.error("[ERROR] Failed to save usage record to database:", dbError);
+        // We don't block the response to the user if this fails, but we log it.
     }
-    usageData[voucher.channel].push({
-      id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-      name: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-      input: inputTokens,
-      output: outputTokens,
-      model: completion.model,
-      costInPol: totalCostPOL, // Store the calculated cost string
-    });
 
     // 6. Return the OpenAI-compatible response
     res.json(completion);

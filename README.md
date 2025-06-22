@@ -1,9 +1,7 @@
-```
-npm install --prefix /Users/marcellomaugeri/Documents/PolyMirror.AI/mirror/backend && npm install --prefix /Users/marcellomaugeri/Documents/PolyMirror.AI/mirror/frontend && npm install --prefix /Users/marcellomaugeri/Documents/PolyMirror.AI/mirror @nomicfoundation/hardhat-toolbox @openzeppelin/contracts
-```
-
 # PolyMirror.AI : Pay AI with Polygon
 Submission for the `Polygon Track` at the `Vibe Coding Hackathon` 2025 organised by the `Encode Club`.
+
+[![PolyMirror.AI](logo.png)]
 
 ## Executive Summary
 Sam is a DeFAI dev which is implementing a trading agent on Polygon.
@@ -22,6 +20,8 @@ That's it! No banks, no paperwork.
 Would it be awesome? Innit?
 That mirror is here.
 PolyMirror.AI is here.
+
+## Project Structure
 
 ## Workflow
 

@@ -4,7 +4,8 @@
   "description": "",
   "main": "mirror.js",
   "scripts": {
-    "start": "node mirror.js"
+    "start": "node mirror.js",
+    "prisma": "dotenv -e ../.env -- npx prisma"
   },
   "dependencies": {
     "@prisma/client": "^5.17.0",
@@ -13,10 +14,11 @@
     "ethers": "^6.14.4",
     "express": "^4.21.2",
     "node-cron": "^3.0.0",
-    "pg": "^8.7.1",
-    "openai": "^4.52.0"
+    "openai": "^4.52.0",
+    "pg": "^8.7.1"
   },
   "devDependencies": {
+    "dotenv-cli": "^8.0.0",
     "prisma": "^5.17.0"
   }
 }
