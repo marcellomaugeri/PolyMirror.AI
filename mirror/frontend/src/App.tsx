@@ -12,6 +12,7 @@ interface UsageRecord {
   model: string;
   cost: string | null;
   timestamp: string; // Primary field for the date
+  time?: number; // Add numeric time for charting
 }
 
 interface PricingData {
@@ -57,7 +58,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     const costInPol = data.cost ? formatPol(data.cost) : '0';
     return (
       <div className="custom-tooltip">
-        <p className="label">{`Time : ${new Date(data.timestamp || data.name).toLocaleString()}`}</p>
+        <p className="label">{`Time : ${new Date(data.timestamp).toLocaleString()}`}</p>
         <p className="intro">{`Input Tokens : ${data.input}`}</p>
         <p className="intro">{`Output Tokens : ${data.output}`}</p>
         <p className="cost">{`Cost : ${data.cost ? `~${parseFloat(costInPol).toFixed(8)} POL` : 'N/A'}`}</p>
@@ -135,7 +136,16 @@ function App() {
       const response = await fetch(`${BACKEND_URL}/api/usage/${account}`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data: UsageRecord[] = await response.json();
-      setUsageData(data);
+
+      // Process data: add numeric timestamp and sort oldest-first for correct chart rendering
+      const processedData = data
+        .map(record => ({
+          ...record,
+          time: new Date(record.timestamp).getTime(),
+        }))
+        .sort((a, b) => (a.time || 0) - (b.time || 0));
+
+      setUsageData(processedData);
     } catch (err) {
       console.error("Failed to fetch usage data:", err);
     }
@@ -207,7 +217,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>PolyMirror.AI Dashboard</h1>
+        <img src="/logo_horizontal.png" alt="PolyMirror.AI Logo" className="header-logo" />
         {account ? (
           <div className="wallet-info">
             <button className="wallet-button connected">{formatAddress(account)}</button>
@@ -273,7 +283,13 @@ function App() {
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={usageData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                    <XAxis dataKey="name" stroke="var(--on-background-color)" />
+                    <XAxis 
+                      dataKey="time"
+                      type="number"
+                      domain={['dataMin', 'dataMax']}
+                      tickFormatter={(unixTime) => new Date(unixTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      stroke="var(--on-background-color)"
+                    />
                     <YAxis stroke="var(--on-background-color)" />
                     <Tooltip content={<CustomTooltip />} />
                     <Legend />

@@ -42,6 +42,11 @@ body {
   color: var(--on-surface-color);
 }
 
+.header-logo {
+  height: 100px; /* Adjust as needed */
+  margin-right: auto; /* Pushes the wallet button to the right */
+}
+
 .dashboard {
   padding: 2rem;
 }
