@@ -27,6 +27,8 @@ This project was developed as part of the `Vibe Coding Hackathon`, with a strong
 -   **AI Model**: Google's Gemini 2.5 Pro
 -   **Process**: The entire development process was conversational. We started with a high-level concept and iteratively built out the smart contract, backend, and frontend. Gemini assisted with writing and debugging code, creating configuration files, writing tests, and even generating the content for this README.
 
+You can find the full conversation history in the `chat.json` file in the root directory. It includes the exported chat from Copilot.
+
 ## Project Structure
 
 The project is a monorepo located in the `/mirror` directory, containing:
