@@ -1,6 +1,6 @@
 # PolyMirror.AI: Pay for AI with Polygon
 
-Submission for the `Polygon Track` at the `Vibe Coding Hackathon` 2025 organised by the `Encode Club`.
+Honourable mention at the `Polygon Track` at the `Vibe Coding Hackathon` 2025 organised by the `Encode Club`.
 
 <p align="center">
   <img src="logo_horizontal.png" alt="PolyMirror.AI Logo" width="600"/>
